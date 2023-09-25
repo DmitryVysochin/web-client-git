@@ -4,6 +4,7 @@ use Illuminate\Support\Facades\Route;
 use \Illuminate\Support\Facades\Auth;
 use \App\Http\Controllers\LoginController;
 use \App\Http\Controllers\RegisterController;
+use \App\Http\Controllers\Connect\ConnectSSHController;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -16,12 +17,12 @@ use \App\Http\Controllers\RegisterController;
 */
 
 Route::get('/', function () {
-    return view('connectlogin');
+    return view('userlogin');
 });
 
-//Route::name('connect.')->group(function(){
-//    Route::get("/login","");
-//});
+Route::name('connect.')->group(function(){
+    Route::post("/connectRegistration",[ConnectSSHController::class,"registration"])->name("registration");
+});
 
 Route::name('user.')->group(function(){
     Route::view("/desktop","desktop")->middleware("auth")->name("desktop");

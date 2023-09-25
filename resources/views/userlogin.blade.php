@@ -54,12 +54,12 @@
                 @enderror
                 <div class="mb-3">
                     <label for="exampleInputEmail" class="form-label">Email address</label>
-                    <input type="email" class="form-control" id="exampleInputEmail" aria-describedby="emailHelp">
+                    <input name="email" type="email" class="form-control" id="exampleInputEmail" aria-describedby="emailHelp">
                     <div id="emailHelp" class="form-text">We'll never share your email with anyone else.</div>
                 </div>
                 <div class="mb-3">
                     <label for="exampleInputPassword" class="form-label">Password</label>
-                    <input type="password" class="form-control" id="exampleInputPassword">
+                    <input name="password" type="password" class="form-control" id="exampleInputPassword">
                 </div>
                 <button type="submit" class="btn btn-primary">Submit</button>
             </form>

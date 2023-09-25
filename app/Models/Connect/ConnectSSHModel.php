@@ -1,10 +1,14 @@
 <?php
 
-namespace App\Models;
+namespace App\Models\Connect;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
-class ConnectSshModel
+
+class ConnectSSHModel extends  Model
 {
-
+    use HasFactory;
+    protected $table = "connects";
     /**
      * The attributes that are mass assignable.
      *

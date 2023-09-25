@@ -14,6 +14,12 @@ class ConnectTable extends Migration
     public function up()
     {
         Schema::create("connects",function (Blueprint $table){
+            $table->integer("idUser")->nullable(false);
+            $table->string("ip",255)->nullable(false)->index("ip");
+            $table->string("port",255)->default("22");
+            $table->string("login",255)->nullable(false);
+            $table->string("pathToSite",255)->nullable(false);
+            $table->timestamps();
         });
     }
 
@@ -24,6 +30,6 @@ class ConnectTable extends Migration
      */
     public function down()
     {
-        //
+        Schema::dropIfExists('connects');
     }
 }
