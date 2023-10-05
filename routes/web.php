@@ -26,6 +26,7 @@ Route::name('connect.')->group(function(){
 
 Route::name('user.')->group(function(){
     Route::view("/desktop","desktop")->middleware("auth")->name("desktop");
+
     Route::get("/login",function (){
         if (Auth::check()){
             return redirect(route("user.desktop"));
