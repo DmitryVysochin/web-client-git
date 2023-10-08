@@ -10,11 +10,14 @@ const mix = require('laravel-mix');
  | file for the application as well as bundling up all the JS files.
  |
  */
+mix.styles([
+    'resources/css/desktop.css',
+], 'public/css/all.css');
+mix.scripts([
+    'resources/js/desktop.js',
+], 'public/js/all.js');
 
 mix.js('resources/js/app.js', 'public/js')
     .postCss('resources/css/app.css', 'public/css', [
         //
     ]);
-mix.styles([
-    'resources/css/desktop.css',
-], 'public/css/all.css');
