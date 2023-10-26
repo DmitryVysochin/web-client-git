@@ -65,8 +65,7 @@
                         </div>
                     </div>
                     <div class="list-files" style="min-height: 40rem;">
-                        <div class="row item-file"
-                             style="border-bottom: 1px solid #8a8b8c;background-color: #edeeee">
+                        <div class="row item-file" style="border-bottom: 1px solid #8a8b8c;background-color: #edeeee">
                             <div class="col-2">
                                 <input class="form-check-input" style="margin-left: 1em" type="checkbox" value="">
                             </div>
@@ -89,7 +88,7 @@
                             </div>
                         </div>
                         <div class="column">
-                            <div class="commit-description " style="">
+                            <div class="commit-description">
                             <textarea style="margin-top: 5px;" class="form-control" placeholder="description"
                                       rows="3"></textarea>
                             </div>

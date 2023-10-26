@@ -19,7 +19,4 @@ $(document).ready(function(){
     $("#select-connect").on('click',function (e){
         openSelectConnect();
     });
-    $("#add-connect").on('click',function (e){
-        openSelectConnect();
-    });
 });
