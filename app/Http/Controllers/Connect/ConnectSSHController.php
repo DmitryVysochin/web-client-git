@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Connect;
 
 use App\Classes\GitConnect;
+use App\Classes\GitParser;
 use App\Classes\SshConnect;
 use App\Models\User;
 use Illuminate\Http\Request;
@@ -24,11 +25,15 @@ class ConnectSSHController
             "pathToSite" => "required",
         ]);
         $connectFields = array_merge(["idUser" => Auth::id()], $requestFields);
-        session()->now("passwordSsh",$connectFields["password"]);
-        $connect=new GitConnect($connectFields["ip"],$connectFields["login"],$connectFields["port"],$requestFields["pathToSite"]);
-        $connect->gitDiffUnstage();
-        file_put_contents($_SERVER["DOCUMENT_ROOT"]."/log/debug.log", print_r([__FILE__.' '.__LINE__, $connect->gitDiffUnstage()], true).PHP_EOL, FILE_APPEND | LOCK_EX);
-        return redirect(route("user.desktop"));
+//        session()->now("passwordSsh",$connectFields["password"]);
+//        $connect=new GitConnect($connectFields["ip"],$connectFields["login"],$connectFields["port"],$requestFields["pathToSite"]);
+//        $connect->gitDiffUnstage();
+
+//        return redirect(route("user.desktop"));
+        $parser=new GitParser("52456332156");
+        $iterator=$parser->readFileOutput();
+        return view("desktop", compact(["iterator"]));
+
     }
 }
 
