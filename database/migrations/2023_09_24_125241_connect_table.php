@@ -14,6 +14,7 @@ class ConnectTable extends Migration
     public function up()
     {
         Schema::create("connects",function (Blueprint $table){
+            $table->increments("id");
             $table->integer("idUser")->nullable(false);
             $table->string("ip",255)->nullable(false)->index("ip");
             $table->string("port",255)->default("22");

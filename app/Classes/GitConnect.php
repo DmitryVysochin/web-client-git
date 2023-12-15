@@ -11,12 +11,17 @@ class GitConnect extends SshConnect
 
     public function gitStatus()
     {
-        return $this->execInPathToSite("git status");
+        return $this->execInPathToSite("git status -s");
     }
 
     public function gitDiffUnstage()
     {
         return $this->execInPathToSite("git diff");
+    }
+
+    public function gitDiffForFile($filename)
+    {
+        return $this->execInPathToSite("git diff ".$filename);
     }
 
     public function gitDiffStage()

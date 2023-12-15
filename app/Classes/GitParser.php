@@ -19,6 +19,14 @@ class GitParser
         }
     }
 
+    public static function parseStatus($statusOutput)
+    {
+        $files=[];
+        preg_match_all("/[^\n]+(?=\n)/",$statusOutput,$files);
+        return $files;
+    }
+
+
     public function readFileOutput()
     {
         $handle = fopen($_SERVER["DOCUMENT_ROOT"].static::PATH_OUTPUT.$this->fileOutputs, "r");

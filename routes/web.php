@@ -22,10 +22,11 @@ Route::get('/', function () {
 
 Route::name('connect.')->group(function(){
     Route::post("/connectRegistration",[ConnectSSHController::class,"registration"])->name("registration");
+    Route::post("/getDiff",[ConnectSSHController::class,"getDiffFromFile"])->name("getDiff");
 });
 
 Route::name('user.')->group(function(){
-    Route::view("/desktop","desktop")->middleware("auth")->name("desktop");
+    Route::get("/desktop",[ConnectSSHController::class,"login"])->name("desktop");
 
     Route::get("/login",function (){
         if (Auth::check()){

@@ -10,7 +10,7 @@
                         </div>
                         <div class="col-6 text-left flex-column">
                             <span class="text-white">Текущий конект:</span>
-                            <span class="text-white">nikolab</span>
+                            <span class="text-white">{{$currentConnect["ip"]}}</span>
                         </div>
                         <div class="col-3" >
                             <img src="/images/icons/down_w.png" width="15" height="15">
@@ -22,7 +22,7 @@
                         </div>
                         <div class="col-6 text-left flex-column">
                             <span >Текущий конект:</span>
-                            <span >nikolab</span>
+                            <span >{{$currentConnect["ip"]}}</span>
                         </div>
                         <div class="col-3" >
                             <img src="/images/icons/down_b.png" width="15" height="15">
@@ -33,7 +33,9 @@
                     <h3 class="text-white">ветки</h3>
                 </div>
                 <div class="col-2" >
-                    <h3 class="text-white">пуш</h3>
+                    <h3 class="text-white">
+                        <a href="{{route("user.logout")}}"><button type="button" class="btn btn-success">Выход</button></a>
+                    </h3>
                 </div>
                 <div class="col-6 justify-content-end items-right">
                     <img src="/logo.png" width="106" height="64">
@@ -51,28 +53,33 @@
                     <div class="col-6"><span>История</span></div>
                 </div>
                 <div class="column">
+                    @if(isset($filesFromStatus))
                     <div class="row count-files text-center">
                         <div class="col-2">
                             <input class="form-check-input" type="checkbox" value="">
                         </div>
                         <div class="col-10">
-                            <span>1 измененый файл</span>
+                            <span>{{count($filesFromStatus)}} измененый файл</span>
                         </div>
                     </div>
                     <div class="list-files overflow-auto" style="min-height: 70vh;">
-                        <div class="row item-file" >
-                            <div class="col-2 p-0">
-                                <input class="form-check-input" type="checkbox" value="">
-                            </div>
-                            <div class="col-8 p-0" >
-                                <span>.gitinore</span>
-                            </div>
-                            <div class="col-2 p-0">
-                                <img src="/images/icons/txt.png" width="15" height="15">
-                            </div>
-                        </div>
 
+                            @foreach($filesFromStatus as $file)
+                                <div class="row item-file" >
+                                    <div class="col-2 p-0">
+                                        <input class="form-check-input" type="checkbox" value="">
+                                    </div>
+                                    <div class="col-8 p-0" >
+                                        <span style="cursor: pointer;" class="fileRow" data-filename="{{$file["name"]}}">{{$file["name"]}}</span>
+                                    </div>
+                                    <div class="col-2 p-0">
+                                        <img src="/images/icons/txt.png" width="15" height="15">
+                                    </div>
+                                </div>
+
+                            @endforeach
                     </div>
+                    @endif
                     <div class="commit">
                         <div class="row">
                             <div class="col-2">
@@ -98,37 +105,11 @@
             </div>
             <div class="col-10 column">
                 <div class="col-12 text-left">
-                    <span>gitignore</span>
+                    <span id="fileNameDiff"></span>
                 </div>
                 <div class="col-12 git-diff overflow-auto">
-                    <div class="row">
-                        <div class="col-1 column" style="background-color: #a0dbe5">
-                            <span>13</span>
-                            <span>13</span>
-                        </div>
-                        <div class="col-11" style="background-color: #b6f6b2">
-                            <span> # MemoryCaptures can get excessive in size.</span>
-                        </div>
-                    </div>
-                    @if(isset($iterator))
-                        @foreach($iterator as $key=>$line)
-                            <div class="row">
-                                <div class="col-1 column" style="background-color: #a0dbe5">
-                                    <span>{{$key}}</span>
-                                    <span>{{$key}}</span>
-                                </div>
-                                <div class="col-11" style="background-color: #b6f6b2">
-                                    <span>{{$line}}</span>
-                                </div>
-                            </div>
-                        @endforeach
-                    @endif
+
                 </div>
-                @if(isset($iterator))
-                    @foreach($iterator as $line)
-                        {{$line}}
-                    @endforeach
-                @endif
             </div>
         </div>
         <div class="connect-editor row d-none">
@@ -152,14 +133,19 @@
                         <span>Admin</span>
                     </div>
                     <div class="list-connects">
-                        <div class="item-connect row">
-                            <div class="col-4">
-                                <img src="/images/icons/lock_b.png" width="15" height="15">
-                            </div>
-                            <div class="col-8">
-                                <span>nikolab</span>
-                            </div>
-                        </div>
+                        @if(isset($connects))
+                            @foreach($connects as $connect)
+                                <div class="item-connect row">
+                                    <div class="col-4">
+                                        <img src="/images/icons/lock_b.png" width="15" height="15">
+                                    </div>
+                                    <div class="col-8">
+                                        <span>{{$connect["ip"].":".$connect["port"]}}</span>
+                                    </div>
+                                </div>
+                            @endforeach
+                        @endif
+
                     </div>
                 </div>
             </div>
