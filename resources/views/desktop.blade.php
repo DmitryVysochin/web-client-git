@@ -5,6 +5,7 @@
             <div class="row" >
                 <div class="col-2" id="select-connect" >
                     <div class="current-connect-b row ">
+                        @if(isset($currentConnect))
                         <div class="col-3" >
                             <img src="/images/icons/lock_w.png" width="20" height="20">
                         </div>
@@ -15,8 +16,21 @@
                         <div class="col-3" >
                             <img src="/images/icons/down_w.png" width="15" height="15">
                         </div>
+                        @else
+                            <div class="col-3" >
+                                <img src="/images/icons/lock_w.png" width="20" height="20">
+                            </div>
+                            <div class="col-6 text-left flex-column">
+                                <span class="text-white">Введите пароль:</span>
+                                <span class="text-white">ввести пароль</span>
+                            </div>
+                            <div class="col-3" >
+                                <img src="/images/icons/down_w.png" width="15" height="15">
+                            </div>
+                        @endif
                     </div>
                     <div class="current-connect-w row d-none">
+                        @if(isset($currentConnect))
                         <div class="col-3">
                             <img src="/images/icons/lock_b.png" width="20" height="20">
                         </div>
@@ -27,6 +41,7 @@
                         <div class="col-3" >
                             <img src="/images/icons/down_b.png" width="15" height="15">
                         </div>
+                        @endif
                     </div>
                 </div>
                 <div class="col-2" >
@@ -56,7 +71,6 @@
                     @if(isset($filesFromStatus))
                     <div class="row count-files text-center">
                         <div class="col-2">
-                            <input class="form-check-input" type="checkbox" value="">
                         </div>
                         <div class="col-10">
                             <span>{{count($filesFromStatus)}} измененый файл</span>
@@ -79,6 +93,16 @@
 
                             @endforeach
                     </div>
+                    @else
+                        <div class="col-2">
+                        </div>
+                        <div class="row count-files text-center">
+                            <div class="col-10">
+                                <span>не подключено</span>
+                            </div>
+                        </div>
+                        <div class="list-files overflow-auto" style="min-height: 70vh;">
+                        </div>
                     @endif
                     <div class="commit">
                         <div class="row">

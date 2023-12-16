@@ -15,16 +15,20 @@ class SshConnect
     {
         $connection = ssh2_connect($ip, $port);
         $password = session("passwordSsh");
-        $isConnect = ssh2_auth_password($connection, $login, $password);
-        if(!$isConnect)
-        {
-            throw new Exception("Failed to connect to the server");
+        if (!empty($password)) {
+            $isConnect = ssh2_auth_password($connection, $login, $password);
+            if (!$isConnect) {
+                throw new Exception("Failed to connect to the server");
+            }
+            $this->ip = $ip;
+            $this->login = $login;
+            $this->port = $port;
+            $this->pathToSite = $pathToSite;
+            $this->connection = $connection;
         }
-        $this->ip=$ip;
-        $this->login=$login;
-        $this->port=$port;
-        $this->pathToSite=$pathToSite;
-        $this->connection=$connection;
+        else{
+            throw new \Exception("empty password");
+        }
     }
 
     public function execInPathToSite($command)

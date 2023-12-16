@@ -38,25 +38,43 @@ class ConnectSSHController
     {
         $idUser=Auth::id();
         $idCurrentConnect=session("currentConnect");
-        $connect=Connect::query()->where("id",$idCurrentConnect)->where("idUser",$idUser)->get()->toArray()[0];
+        if (empty($idCurrentConnect))
+        {
+            $connect=Connect::query()->where("idUser",$idUser)->orderBy('id','desc')->first()->toArray();
+
+        }else{
+            $connect=Connect::query()->where("id",$idCurrentConnect)->where("idUser",$idUser)->first()->toArray();
+        }
         $gitManager=new GitManager($connect["ip"],$connect["login"],$connect["port"],$connect["pathToSite"]);
         return $gitManager;
     }
 
     public static function login(Request $request)
     {
-        $idUser=Auth::id();
-        $idCurrentConnect=session("currentConnect");
-        $connects=Connect::query()->where("idUser",$idUser)->get()->toArray();
-        $currentConnect=[];
-        foreach ($connects as $connect){
-            if($connect["id"]==$idCurrentConnect){
-                $currentConnect=$connect;
-            }
+        if (!Auth::check()) {
+            return redirect(route("user.login"));
         }
-        $gitManager=static::getGitManagerForCurrentConnect();
-        $filesFromStatus=$gitManager->getFilesFromStatus();
-        return view("desktop",compact(["filesFromStatus","currentConnect","connects"]));
+        try {
+            $idUser = Auth::id();
+            $idCurrentConnect = session("currentConnect");
+            $connects = Connect::query()->where("idUser", $idUser)->get()->toArray();
+            $currentConnect = [];
+            foreach ($connects as $connect) {
+                if ($connect["id"] == $idCurrentConnect) {
+                    $currentConnect = $connect;
+                }
+            }
+            $gitManager = static::getGitManagerForCurrentConnect();
+            $filesFromStatus = $gitManager->getFilesFromStatus();
+
+            return view("desktop", compact([
+                "filesFromStatus",
+                "currentConnect",
+                "connects"
+            ]));
+        }catch (\Throwable $exception){
+            return view("desktop");
+        }
     }
 
     public static function getDiffFromFile(Request $request)
