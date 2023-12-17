@@ -164,7 +164,14 @@
                                         <img src="/images/icons/lock_b.png" width="15" height="15">
                                     </div>
                                     <div class="col-8">
-                                        <span>{{$connect["ip"].":".$connect["port"]}}</span>
+                                        <button type="button" class="btn btn-connect" data-bs-toggle="modal"
+                                                data-connect-id="{{$connect["id"]}}"
+                                                data-connect-ip="{{$connect["ip"]}}"
+                                                data-connect-port="{{$connect["port"]}}"
+                                                data-connect-pathToSite="{{$connect["pathToSite"]}}"
+                                                data-connect-login="{{$connect["login"]}}"
+                                                data-bs-target="#signInConnect"
+                                        ><span>{{$connect["ip"].":".$connect["port"]}}</span></button>
                                     </div>
                                 </div>
                             @endforeach
@@ -221,50 +228,96 @@
             </div>
         </div>
     </div>
-    {{--<div class="bg-gray-100 dark:bg-gray-900 items-right">--}}
-    {{--    <div>--}}
-    {{--        <a href="{{route("user.logout")}}">--}}
-    {{--            <button type="button" class="btn btn-success">Выход</button>--}}
-    {{--        </a>--}}
-    {{--    </div>--}}
-    {{--</div>--}}
-    {{--<div class="relative flex items-top justify-center min-h-screen bg-gray-100 dark:bg-gray-900 sm:items-center py-4 sm:pt-0">--}}
-    {{--    <div class="max-w-6xl mx-auto sm:px-6 lg:px-8">--}}
-    {{--        <div>--}}
-    {{--            <div>--}}
-    {{--                <h1>Рабочий Стол</h1>--}}
-    {{--                @if(isset($isConnect))--}}
-    {{--                    {{$isConnect}}--}}
-    {{--                @endif--}}
-    {{--                <form method="post" action="{{ route("connect.registration") }}">--}}
-    {{--                    @csrf--}}
-    {{--                    <div class="mb-3">--}}
-    {{--                        <label for="exampleInputIP" class="form-label">IP адрес сервера</label>--}}
-    {{--                        <input name="ip" type="text" class="form-control" id="exampleInputIP" aria-describedby="ipHelp" required>--}}
-    {{--                        <div id="ipHelp" class="form-text">Введите в формате 127.0.0.1</div>--}}
-    {{--                    </div>--}}
-    {{--                    <div class="mb-3">--}}
-    {{--                        <label for="exampleInputPort" class="form-label">Порт SSH</label>--}}
-    {{--                        <input name="port" value="22" type="text" class="form-control" id="exampleInputPort" aria-describedby="portHelp">--}}
-    {{--                        <div id="portHelp" class="form-text">По умолчанию 22</div>--}}
-    {{--                    </div>--}}
-    {{--                    <div class="mb-3">--}}
-    {{--                        <label for="exampleInputLogin" class="form-label">Логин SSH</label>--}}
-    {{--                        <input name="login" type="text" class="form-control" id="exampleInputLogin" required>--}}
-    {{--                    </div>--}}
-    {{--                    <div class="mb-3">--}}
-    {{--                        <label for="exampleInputPassword" class="form-label">Пароль SSH</label>--}}
-    {{--                        <input name="password" type="text" class="form-control" id="exampleInputPassword" required>--}}
-    {{--                    </div>--}}
-    {{--                    <div class="mb-3">--}}
-    {{--                        <label for="exampleInputPath" class="form-label">Путь до корня сайта</label>--}}
-    {{--                        <input name="pathToSite" type="text" class="form-control" id="exampleInputPath" required>--}}
-    {{--                    </div>--}}
-    {{--                    <button type="submit" class="btn btn-primary">Войти</button>--}}
-    {{--                </form>--}}
-    {{--            </div>--}}
-    {{--        </div>--}}
-    {{--    </div>--}}
-    {{--</div>--}}
+    <div class="modal fade" id="signInConnect" tabindex="-1" aria-labelledby="signInConnectLabel"
+         aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="signInConnectLabel">Заголовок модального окна</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Закрыть"></button>
+                </div>
+                <form method="post" action="{{ route("connect.login") }}">
+                    <div class="modal-body">
+                        @csrf
+                        <input type="text" name="idConnect" id="loginInputIPIdConnect" >
+
+                        <div class="mb-3">
+                            <label for="loginInputIP" class="form-label">IP адрес сервера</label>
+                            <input name="ip" type="text" class="form-control" id="loginInputIP"
+                                   aria-describedby="ipHelp" required>
+                            <div id="ipHelp" class="form-text">Введите в формате 127.0.0.1</div>
+                        </div>
+                        <div class="mb-3">
+                            <label for="loginInputPort" class="form-label">Порт SSH</label>
+                            <input name="port" value="22" type="text" class="form-control" id="loginInputPort"
+                                   aria-describedby="portHelp">
+                            <div id="portHelp" class="form-text">По умолчанию 22</div>
+                        </div>
+                        <div class="mb-3">
+                            <label for="loginInputLogin" class="form-label">Логин SSH</label>
+                            <input name="login" type="text" class="form-control" id="loginInputLogin" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="loginInputPassword" class="form-label">Пароль SSH</label>
+                            <input name="password" type="text" class="form-control" id="loginInputPassword" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="loginInputPath" class="form-label">Путь до корня сайта</label>
+                            <input name="pathToSite" type="text" class="form-control" id="loginInputPath" required>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Закрыть</button>
+                        <button type="submit" class="btn btn-primary">Войти</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+{{--    <div class="bg-gray-100 dark:bg-gray-900 items-right">--}}
+{{--        <div>--}}
+{{--            <a href="{{route("user.logout")}}">--}}
+{{--                <button type="button" class="btn btn-success">Выход</button>--}}
+{{--            </a>--}}
+{{--        </div>--}}
+{{--    </div>--}}
+{{--    <div class="relative flex items-top justify-center min-h-screen bg-gray-100 dark:bg-gray-900 sm:items-center py-4 sm:pt-0">--}}
+{{--        <div class="max-w-6xl mx-auto sm:px-6 lg:px-8">--}}
+{{--            <div>--}}
+{{--                <div>--}}
+{{--                    <h1>Рабочий Стол</h1>--}}
+{{--                    @if(isset($isConnect))--}}
+{{--                        {{$isConnect}}--}}
+{{--                    @endif--}}
+{{--                    <form method="post" action="{{ route("connect.registration") }}">--}}
+{{--                        @csrf--}}
+{{--                        <div class="mb-3">--}}
+{{--                            <label for="exampleInputIP" class="form-label">IP адрес сервера</label>--}}
+{{--                            <input name="ip" type="text" class="form-control" id="exampleInputIP" aria-describedby="ipHelp" required>--}}
+{{--                            <div id="ipHelp" class="form-text">Введите в формате 127.0.0.1</div>--}}
+{{--                        </div>--}}
+{{--                        <div class="mb-3">--}}
+{{--                            <label for="exampleInputPort" class="form-label">Порт SSH</label>--}}
+{{--                            <input name="port" value="22" type="text" class="form-control" id="exampleInputPort" aria-describedby="portHelp">--}}
+{{--                            <div id="portHelp" class="form-text">По умолчанию 22</div>--}}
+{{--                        </div>--}}
+{{--                        <div class="mb-3">--}}
+{{--                            <label for="exampleInputLogin" class="form-label">Логин SSH</label>--}}
+{{--                            <input name="login" type="text" class="form-control" id="exampleInputLogin" required>--}}
+{{--                        </div>--}}
+{{--                        <div class="mb-3">--}}
+{{--                            <label for="exampleInputPassword" class="form-label">Пароль SSH</label>--}}
+{{--                            <input name="password" type="text" class="form-control" id="exampleInputPassword" required>--}}
+{{--                        </div>--}}
+{{--                        <div class="mb-3">--}}
+{{--                            <label for="exampleInputPath" class="form-label">Путь до корня сайта</label>--}}
+{{--                            <input name="pathToSite" type="text" class="form-control" id="exampleInputPath" required>--}}
+{{--                        </div>--}}
+{{--                        <button type="submit" class="btn btn-primary">Войти</button>--}}
+{{--                    </form>--}}
+{{--                </div>--}}
+{{--            </div>--}}
+{{--        </div>--}}
+{{--    </div>--}}
 </main>
 @include('footer')

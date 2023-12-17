@@ -48,16 +48,25 @@ class ConnectSSHController
         $gitManager=new GitManager($connect["ip"],$connect["login"],$connect["port"],$connect["pathToSite"]);
         return $gitManager;
     }
+    public static function loginConnect(Request $request)
+    {
+        if (!Auth::check()) {
+            return redirect(route("user.login"));
+        }
+        session()->put("passwordSsh",$request->post("password"));
+        session()->put("currentConnect",$request->post("idConnect"));
+        return redirect(route("user.desktop"));
+    }
 
     public static function login(Request $request)
     {
         if (!Auth::check()) {
             return redirect(route("user.login"));
         }
+        $idUser = Auth::id();
+        $connects = Connect::query()->where("idUser", $idUser)->get()->toArray();
         try {
-            $idUser = Auth::id();
             $idCurrentConnect = session("currentConnect");
-            $connects = Connect::query()->where("idUser", $idUser)->get()->toArray();
             $currentConnect = [];
             foreach ($connects as $connect) {
                 if ($connect["id"] == $idCurrentConnect) {
@@ -66,14 +75,13 @@ class ConnectSSHController
             }
             $gitManager = static::getGitManagerForCurrentConnect();
             $filesFromStatus = $gitManager->getFilesFromStatus();
-
             return view("desktop", compact([
                 "filesFromStatus",
                 "currentConnect",
                 "connects"
             ]));
         }catch (\Throwable $exception){
-            return view("desktop");
+            return view("desktop",compact(["connects"]));
         }
     }
 

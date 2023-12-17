@@ -23,6 +23,7 @@ Route::get('/', function () {
 Route::name('connect.')->group(function(){
     Route::post("/connectRegistration",[ConnectSSHController::class,"registration"])->name("registration");
     Route::post("/getDiff",[ConnectSSHController::class,"getDiffFromFile"])->name("getDiff");
+    Route::post("/loginConnect",[ConnectSSHController::class,"loginConnect"])->name("login");
 });
 
 Route::name('user.')->group(function(){

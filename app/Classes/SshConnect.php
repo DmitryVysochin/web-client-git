@@ -44,7 +44,7 @@ class SshConnect
         $result_err = stream_get_contents($err_stream);
         if(strlen($result_stdio)==0)
         {
-            throw new Exception($result_err);
+            return "удалено";
         }
         return $result_stdio;
     }

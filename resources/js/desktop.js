@@ -56,6 +56,14 @@ $(document).ready(function(){
     $("#select-connect").on('mousedown',function (e){
         openSelectConnect();
     });
+
+    $(".btn-connect").on('mousedown',function (e){
+        $("#loginInputIP").val($(this).attr("data-connect-ip"))
+        $("#loginInputIPIdConnect").val($(this).attr("data-connect-id"))
+        $("#loginInputPort").val($(this).attr("data-connect-port"))
+        $("#loginInputLogin").val($(this).attr("data-connect-login"))
+        $("#loginInputPath").val($(this).attr("data-connect-pathToSite"))
+    });
     $(".fileRow").on('mousedown',function (e){
         getDiffFromFile($(this).attr('data-filename'));
     });

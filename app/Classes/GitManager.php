@@ -22,8 +22,8 @@ class GitManager
         $prepareFiles=[];
         foreach ($files as $file)
         {
-            $arFile=explode(" ",$file);
-            $prepareFiles[]=["status"=>$arFile[1],"name"=>$arFile[2]];
+            $arFile=explode(" ",trim($file));
+            $prepareFiles[]=["status"=>$arFile[0],"name"=>$arFile[1]];
         }
         return $prepareFiles;
     }
