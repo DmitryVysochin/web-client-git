@@ -30,11 +30,30 @@ class GitManager
 
     public function getDiffFromFile($fileName)
     {
-       $diffOutput=$this->connect->gitDiffForFile($fileName);
-       $diff=[];
-       preg_match_all("/[^\n]+(?=\n)/",$diffOutput,$diff);
-       return response()->json($diff);
+        return $this->connect->gitDiffFromFile($fileName);
     }
 
+    public function getAllBranches()
+    {
+        $branchOutput=$this->connect->gitBranch();
+        $branches=[];
+        preg_match_all("/[^\n]+(?=\n)/",$branchOutput,$branches);
+        $branches=$branches[0];
+        $prepareBranches=[];
+        foreach ($branches as $branch){
+            $current=trim($branch);
+            if($current[0]=="*"){
+                $prepareBranches["current"]=substr($current,1);
+            }
+            else{
+                $prepareBranches[]=$current;
+            }
+        }
+        return $prepareBranches;
+    }
 
+    public function checkoutBranch($branch)
+    {
+        $this->connect->gitCheckout($branch);
+    }
 }

@@ -42,10 +42,12 @@ class SshConnect
 
         $result_stdio = stream_get_contents($stdio_stream);
         $result_err = stream_get_contents($err_stream);
-        if(strlen($result_stdio)==0)
+        file_put_contents($_SERVER["DOCUMENT_ROOT"]."/log/debug.log", print_r([__FILE__.' '.__LINE__, $result_stdio], true).PHP_EOL, FILE_APPEND | LOCK_EX);
+        file_put_contents($_SERVER["DOCUMENT_ROOT"]."/log/debug.log", print_r([__FILE__.' '.__LINE__, $result_err], true).PHP_EOL, FILE_APPEND | LOCK_EX);
+        if(strlen($result_err)!=0)
         {
-            return "удалено";
+            return ["ERROR"=>$result_err];
         }
-        return $result_stdio;
+        return ["RESULT"=>$result_stdio];
     }
 }

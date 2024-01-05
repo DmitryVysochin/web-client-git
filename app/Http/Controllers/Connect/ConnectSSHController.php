@@ -75,12 +75,15 @@ class ConnectSSHController
             }
             $gitManager = static::getGitManagerForCurrentConnect();
             $filesFromStatus = $gitManager->getFilesFromStatus();
+            $allBranches = $gitManager->getAllBranches();
             return view("desktop", compact([
                 "filesFromStatus",
                 "currentConnect",
-                "connects"
+                "connects",
+                "allBranches"
             ]));
-        }catch (\Throwable $exception){
+        }catch (\Throwable $throwable){
+            print_r($throwable->getMessage());
             return view("desktop",compact(["connects"]));
         }
     }
@@ -89,7 +92,20 @@ class ConnectSSHController
     {
         $data=$request->all();
         $gitManager=static::getGitManagerForCurrentConnect();
-        return $gitManager->getDiffFromFile($data["file"]);
+        return response()->json($gitManager->getDiffFromFile($data["file"]));
     }
+
+    public static function checkoutBranch(Request $request)
+    {
+        try {
+            $data = $request->all();
+            $gitManager = static::getGitManagerForCurrentConnect();
+            $gitManager->checkoutBranch($data["branch"]);
+        }catch (\Exception $exception)
+        {
+            return response()->json(["error"=>$exception->getMessage()]);
+        }
+    }
+
 }
 

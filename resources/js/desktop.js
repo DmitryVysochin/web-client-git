@@ -1,51 +1,84 @@
-$(document).ready(function(){
+$(document).ready(function() {
     var isOpenSelectConnect=false;
-    function openSelectConnect(){
+
+    function openSelectConnect() {
         var element=$("#select-connect");
-        element.css('background-color','white');
+        element.css('background-color', 'white');
         $('.current-connect-b').addClass('d-none');
         $('.current-connect-w').removeClass('d-none');
         $('.git-editor').addClass('d-none');
         $('.connect-editor').removeClass('d-none');
     }
-    function closeSelectConnect(){
+
+    function openSelectBranch() {
+        var element=$("#select-branch");
+        element.css('background-color', 'white');
+        $('.current-branch-w').addClass('d-none');
+        $('.current-branch-b').removeClass('d-none');
+        $('.git-editor').addClass('d-none');
+        $('.connect-editor').addClass('d-none');
+        $('.branches-editor').removeClass('d-none');
+    }
+
+    function closeSelectConnect() {
         var element=$("#select-connect");
-        element.css('background-color','black');
+        element.css('background-color', 'black');
         $('.current-connect-w').addClass('d-none');
         $('.current-connect-b').removeClass('d-none');
         $('.connect-editor').addClass('d-none');
         $('.git-editor').removeClass('d-none');
     }
 
-    function getDiffFromFile(fileName){
+    function checkoutBranch(branch) {
+        $.ajax({
+            type: "POST",
+            url: "/checkoutBranch",
+            cache: false,
+            dataType: "json",
+            data: {
+                branch: branch,
+                "_token": $('meta[name="csrf-token"]').attr('content')
+            },
+            beforeSend: function() {
+
+            },
+            success: function(data) {
+                if(data.error.length>1)
+                {
+                    alert(data.error);
+                }else {
+                    location.reload();
+                }
+            }
+        });
+    }
+
+    function getDiffFromFile(fileName) {
         $.ajax({
             type: "POST",
             url: "/getDiff",
             cache: false,
             dataType: "json",
             data: {
-                file:fileName,
-                "_token":$('meta[name="csrf-token"]').attr('content')
+                file: fileName,
+                "_token": $('meta[name="csrf-token"]').attr('content')
             },
-            beforeSend: function(){
+            beforeSend: function() {
 
             },
-            success: function(data){
-                var rows=data[0];
-                var diffContainer=$(".git-diff");
+            success: function(data) {
+                var diffContainer=$("#git-diff");
                 diffContainer.empty();
                 $("#fileNameDiff").text(fileName);
-                rows.forEach(function(currentValue,key,array){
-                    diffContainer.append("<div class=\"row\">\n" +
-                        "                        <div class=\"col-1 column\" style=\"background-color: #a0dbe5\">\n" +
-                        "                            <span>"+key+"</span>\n" +
-                        "                            <span>"+key+"</span>\n" +
-                        "                        </div>\n" +
-                        "                        <div class=\"col-11\" style=\"background-color: #b6f6b2\">\n" +
-                        "                            <span> "+currentValue+"</span>\n" +
-                        "                        </div>\n" +
-                        "                    </div>");
-                });
+                if (data.length > 1) {
+                    const targetElement=document.getElementById('git-diff');
+                    const configuration={drawFileList: false, diffMaxChanges: 100, matching: 'lines', highlight: true};
+                    const diff2htmlUi=new Diff2HtmlUI(targetElement, data, configuration);
+                    diff2htmlUi.draw();
+                    diff2htmlUi.highlightCode();
+                } else {
+                    diffContainer.append("");
+                }
             },
             error: function() {
                 console.log("error");
@@ -53,20 +86,29 @@ $(document).ready(function(){
         });
     }
 
-    $("#select-connect").on('mousedown',function (e){
+    $("#select-connect").on('mousedown', function(e) {
         openSelectConnect();
     });
 
-    $(".btn-connect").on('mousedown',function (e){
+    $("#select-branch").on('mousedown', function(e) {
+        openSelectBranch();
+    });
+
+    $(".branch").on('click', function(e) {
+        checkoutBranch($(this).attr('data-branch'));
+    });
+
+    $(".btn-connect").on('mousedown', function(e) {
         $("#loginInputIP").val($(this).attr("data-connect-ip"))
         $("#loginInputIPIdConnect").val($(this).attr("data-connect-id"))
         $("#loginInputPort").val($(this).attr("data-connect-port"))
         $("#loginInputLogin").val($(this).attr("data-connect-login"))
         $("#loginInputPath").val($(this).attr("data-connect-pathToSite"))
     });
-    $(".fileRow").on('mousedown',function (e){
+    $(".fileRow").on('mousedown', function(e) {
         getDiffFromFile($(this).attr('data-filename'));
     });
+
     // $("#select-connect").on("mouseup",function(e){
     //     isOpenSelectConnect=true;
     // })
