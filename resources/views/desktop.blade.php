@@ -76,71 +76,162 @@
     <div class="container-fluid">
         <div class="git-editor row">
             <div class="col-2 text-center">
-                <div class="row">
-                    <div class="col-6">
-                        <span>Изменения</span>
+                <form id="commitForm" method="POST" action="{{ route("git.commit") }}">
+                    @csrf
+                    <div class="row">
+                        <ul class="nav nav-tabs">
+                            <li class="col-6 nav-item">
+                                <a class="nav-link active" data-bs-toggle="tab" href="#change">Изменения</a>
+                            </li>
+                            <li class="col-6 nav-item">
+                                <a class="nav-link" data-bs-toggle="tab" href="#history">История</a>
+                            </li>
+                        </ul>
                     </div>
-                    <div class="col-6"><span>История</span></div>
-                </div>
-                <div class="column">
-                    @if(isset($filesFromStatus))
-                        <div class="row count-files text-center">
-                            <div class="col-2">
-                            </div>
-                            <div class="col-10">
-                                <span>{{count($filesFromStatus)}} измененый файл</span>
-                            </div>
-                        </div>
-                        <div class="list-files overflow-auto" style="min-height: 70vh;">
-                            @foreach($filesFromStatus as $file)
-                                <div class="row item-file">
-                                    <div class="col-2 p-0">
-                                        <input class="form-check-input" type="checkbox" value="">
+                    <div class="tab-content">
+                        <div class="tab-pane active" id="change">
+                            <div class="column">
+                                @if(isset($filesFromStatus))
+                                    <div class="row count-files text-center">
+                                        <div class="col-2">
+                                        </div>
+                                        <div class="col-10">
+                                            <span>{{count($filesFromStatus)}} измененый файл</span>
+                                        </div>
                                     </div>
-                                    <div class="col-8 p-0">
+                                    <div class="list-files overflow-auto" style="min-height: 70vh;">
+                                        @foreach($filesFromStatus as $key=>$file)
+                                            <div class="row item-file">
+                                                <div class="col-2 p-0">
+                                                    <input name="checkboxFile{{$key+1}}" class="form-check-input"
+                                                           type="checkbox" value=""
+                                                           data-filename-checkbox="{{$file["name"]}}">
+                                                </div>
+                                                <div class="col-8 p-0">
                                         <span style="cursor: pointer;" class="fileRow"
                                               data-filename="{{$file["name"]}}">{{$file["name"]}}</span>
+                                                </div>
+                                                <div class="col-2 p-0">
+                                                    <img src="/images/icons/txt.png" width="15" height="15">
+                                                </div>
+                                            </div>
+
+                                        @endforeach
                                     </div>
-                                    <div class="col-2 p-0">
-                                        <img src="/images/icons/txt.png" width="15" height="15">
+                                @else
+                                    <div class="col-2">
+                                    </div>
+                                    <div class="row count-files text-center">
+                                        <div class="col-10">
+                                            <span>не подключено</span>
+                                        </div>
+                                    </div>
+                                    <div class="list-files overflow-auto" style="min-height: 70vh;">
+                                    </div>
+                                @endif
+                                <div class="commit">
+                                    <div class="row">
+                                        <div class="col-2">
+                                            <img src="/images/icons/txt.png" width="15" height="15">
+                                        </div>
+                                        <div class="col-10">
+                                            <input name="commitName" type="text" class="form-control"
+                                                   placeholder="название коммита">
+                                        </div>
+                                    </div>
+                                    <div class="column">
+                                        <div class="commit-description">
+                            <textarea name="commitDescription" class="form-control" placeholder="description"
+                                      rows="3"></textarea>
+                                        </div>
+                                        <div class="submit-commit">
+                                            <button type="submit" class="btn btn-primary">
+                                                Коммит
+                                            </button>
+                                        </div>
                                     </div>
                                 </div>
-
-                            @endforeach
-                        </div>
-                    @else
-                        <div class="col-2">
-                        </div>
-                        <div class="row count-files text-center">
-                            <div class="col-10">
-                                <span>не подключено</span>
                             </div>
                         </div>
-                        <div class="list-files overflow-auto" style="min-height: 70vh;">
-                        </div>
-                    @endif
-                    <div class="commit">
-                        <div class="row">
-                            <div class="col-2">
-                                <img src="/images/icons/txt.png" width="15" height="15">
-                            </div>
-                            <div class="col-10">
-                                <input type="text" class="form-control" placeholder="название коммита">
-                            </div>
-                        </div>
-                        <div class="column">
-                            <div class="commit-description">
-                            <textarea class="form-control" placeholder="description"
-                                      rows="3"></textarea>
-                            </div>
-                            <div class="submit-commit">
-                                <button type="button" class="btn btn-primary">
-                                    Коммит
-                                </button>
+                        <div class="tab-pane" id="history">
+                            <div class="column">
+                                @if(isset($history))
+                                    @foreach($history as $commit)
+                                        <div class="column border">
+                                            <div class="row col-12">
+                                                <span>{{$commit["message"]}}</span>
+                                            </div>
+                                            <div class="row">
+                                                <span>{{$commit["author"]}} &#183; {{$commit["date"]}} </span>
+                                            </div>
+                                        </div>
+                                    @endforeach
+                                @endif
                             </div>
                         </div>
                     </div>
-                </div>
+
+                    {{--                <div class="column">--}}
+                    {{--                    @if(isset($filesFromStatus))--}}
+                    {{--                        <div class="row count-files text-center">--}}
+                    {{--                            <div class="col-2">--}}
+                    {{--                            </div>--}}
+                    {{--                            <div class="col-10">--}}
+                    {{--                                <span>{{count($filesFromStatus)}} измененый файл</span>--}}
+                    {{--                            </div>--}}
+                    {{--                        </div>--}}
+                    {{--                        <div class="list-files overflow-auto" style="min-height: 70vh;">--}}
+                    {{--                            @foreach($filesFromStatus as $key=>$file)--}}
+                    {{--                                <div class="row item-file">--}}
+                    {{--                                    <div class="col-2 p-0">--}}
+                    {{--                                        <input name="checkboxFile{{$key+1}}" class="form-check-input" type="checkbox" value="" data-filename-checkbox="{{$file["name"]}}">--}}
+                    {{--                                    </div>--}}
+                    {{--                                    <div class="col-8 p-0">--}}
+                    {{--                                        <span style="cursor: pointer;" class="fileRow"--}}
+                    {{--                                              data-filename="{{$file["name"]}}">{{$file["name"]}}</span>--}}
+                    {{--                                    </div>--}}
+                    {{--                                    <div class="col-2 p-0">--}}
+                    {{--                                        <img src="/images/icons/txt.png" width="15" height="15">--}}
+                    {{--                                    </div>--}}
+                    {{--                                </div>--}}
+
+                    {{--                            @endforeach--}}
+                    {{--                        </div>--}}
+                    {{--                    @else--}}
+                    {{--                        <div class="col-2">--}}
+                    {{--                        </div>--}}
+                    {{--                        <div class="row count-files text-center">--}}
+                    {{--                            <div class="col-10">--}}
+                    {{--                                <span>не подключено</span>--}}
+                    {{--                            </div>--}}
+                    {{--                        </div>--}}
+                    {{--                        <div class="list-files overflow-auto" style="min-height: 70vh;">--}}
+                    {{--                        </div>--}}
+                    {{--                    @endif--}}
+                    {{--                    <div class="commit">--}}
+                    {{--                        <div class="row">--}}
+                    {{--                            <div class="col-2">--}}
+                    {{--                                <img src="/images/icons/txt.png" width="15" height="15">--}}
+                    {{--                            </div>--}}
+                    {{--                            <div class="col-10">--}}
+                    {{--                                <input name="commitName" type="text" class="form-control" placeholder="название коммита">--}}
+                    {{--                            </div>--}}
+                    {{--                        </div>--}}
+                    {{--                        <div class="column">--}}
+                    {{--                            <div class="commit-description">--}}
+                    {{--                            <textarea name="commitDescription" class="form-control" placeholder="description"--}}
+                    {{--                                      rows="3"></textarea>--}}
+                    {{--                            </div>--}}
+                    {{--                            <div class="submit-commit">--}}
+                    {{--                                <button type="submit" class="btn btn-primary">--}}
+                    {{--                                    Коммит--}}
+                    {{--                                </button>--}}
+                    {{--                            </div>--}}
+                    {{--                        </div>--}}
+                    {{--                    </div>--}}
+                    {{--                </div>--}}
+                </form>
+
             </div>
             <div class="col-10 column">
                 <div class="col-12 text-left">

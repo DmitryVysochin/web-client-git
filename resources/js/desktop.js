@@ -43,10 +43,9 @@ $(document).ready(function() {
 
             },
             success: function(data) {
-                if(data.error.length>1)
-                {
+                if (data.error.length > 1) {
                     alert(data.error);
-                }else {
+                } else {
                     location.reload();
                 }
             }
@@ -96,6 +95,36 @@ $(document).ready(function() {
 
     $(".branch").on('click', function(e) {
         checkoutBranch($(this).attr('data-branch'));
+    });
+
+    $("#commitForm").submit(function(e) {
+        e.preventDefault();
+        var data={};
+        $("#commitForm").find("input, textarea").each(function() {
+            if (this.type === "checkbox") {
+                if(this.checked) {
+                    data[this.name]=String(this.dataset.filenameCheckbox);
+                }
+            }else {
+                data[this.name]=this.value;
+            }
+        });
+        $.ajax({
+            type: "POST",
+            url: "/commit",
+            cache: false,
+            dataType: "json",
+            data: data,
+            beforeSend: function() {
+
+            },
+            success: function(data) {
+                location.reload();
+            },
+            error: function() {
+                console.log("error");
+            }
+        });
     });
 
     $(".btn-connect").on('mousedown', function(e) {

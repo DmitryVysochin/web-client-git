@@ -28,6 +28,7 @@ Route::name('connect.')->group(function(){
 Route::name('git.')->group(function(){
     Route::post("/getDiff",[ConnectSSHController::class,"getDiffFromFile"])->name("diff");
     Route::post("/checkoutBranch",[ConnectSSHController::class,"checkoutBranch"])->name("checkoutBranch");
+    Route::post("/commit",[ConnectSSHController::class,"commit"])->name("commit");
 });
 
 

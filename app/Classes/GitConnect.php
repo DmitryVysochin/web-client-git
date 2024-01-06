@@ -33,12 +33,22 @@ class GitConnect extends SshConnect
 
     public function gitLog()
     {
-        return $this->gitCommand("git log");
+        return $this->gitCommand("git log -n 20 --pretty=format:'%s | (%cr)| %an'");
     }
 
     public function gitBranch()
     {
         return $this->gitCommand("git branch");
+    }
+
+    public function gitAdd($file)
+    {
+        return $this->gitCommand("git add ".$file);
+    }
+
+    public function gitCommit($message)
+    {
+        return $this->gitCommand("git commit -m  '".$message."'");
     }
 
     public function gitCheckout($data)
