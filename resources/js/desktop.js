@@ -1,5 +1,9 @@
 $(document).ready(function() {
     var isOpenSelectConnect=false;
+    var loadingModal= new bootstrap.Modal(document.getElementById('loadingOperation'), {
+        backdrop: 'static',
+        keyboard: false
+    });
 
     function openSelectConnect() {
         var element=$("#select-connect");
@@ -30,6 +34,11 @@ $(document).ready(function() {
     }
 
     function checkoutBranch(branch) {
+        var loadingModal = new bootstrap.Modal(document.getElementById('loadingOperation'), {
+            backdrop: 'static',
+            keyboard: false
+        });
+        loadingModal.show();
         $.ajax({
             type: "POST",
             url: "/checkoutBranch",
@@ -43,16 +52,29 @@ $(document).ready(function() {
 
             },
             success: function(data) {
-                if (data.error.length > 1) {
-                    alert(data.error);
-                } else {
+                loadingModal.hide();
+                var classColor="success";
+                if(String(data.result) == "ERROR")
+                {
+                    classColor="danger"
+                }
+                else {
                     location.reload();
                 }
+                $("#notificationContainer").append("<div class=\"alert alert-"+classColor+" alert-dismissible fade show\" role=\"alert\">\n" +
+                    "                <strong>Notification!</strong> "+data.message+"\n" +
+                    "                <button type=\"button\" class=\"btn-close\" data-bs-dismiss=\"alert\" aria-label=\"Закрыть\"></button>\n" +
+                    "            </div>");
             }
         });
     }
 
     function getDiffFromFile(fileName) {
+        var loadingModal = new bootstrap.Modal(document.getElementById('loadingOperation'), {
+            backdrop: 'static',
+            keyboard: false
+        });
+        loadingModal.show();
         $.ajax({
             type: "POST",
             url: "/getDiff",
@@ -66,6 +88,7 @@ $(document).ready(function() {
 
             },
             success: function(data) {
+                loadingModal.hide();
                 var diffContainer=$("#git-diff");
                 diffContainer.empty();
                 $("#fileNameDiff").text(fileName);
@@ -80,7 +103,11 @@ $(document).ready(function() {
                 }
             },
             error: function() {
-                console.log("error");
+                var classColor="danger";
+                $("#notificationContainer").append("<div class=\"alert alert-"+classColor+" alert-dismissible fade show\" role=\"alert\">\n" +
+                    "                <strong>Notification!</strong> Ошибка загрузки файла \n" +
+                    "                <button type=\"button\" class=\"btn-close\" data-bs-dismiss=\"alert\" aria-label=\"Закрыть\"></button>\n" +
+                    "            </div>");
             }
         });
     }
@@ -97,7 +124,104 @@ $(document).ready(function() {
         checkoutBranch($(this).attr('data-branch'));
     });
 
+    $("#buttonDeleteConnect").on('click', function(e) {
+        checkoutBranch($(this).attr('data-branch'));
+    });
+
+    $("#pullAction").on('click', function(e) {
+        loadingModal.show();
+        var branch = $(".currentBranchSpan").html();
+        $.ajax({
+            type: "POST",
+            url: "/pull",
+            cache: false,
+            dataType: "json",
+            data:{
+                "branch": branch,
+                "_token": $('meta[name="csrf-token"]').attr('content')
+            },
+            beforeSend: function() {
+
+            },
+            success: function(data) {
+                loadingModal.hide();
+                var classColor="success";
+                if(String(data.result) == "ERROR")
+                {
+                    classColor="danger"
+                }
+                $("#notificationContainer").append("<div class=\"alert alert-"+classColor+" alert-dismissible fade show\" role=\"alert\">\n" +
+                    "                <strong>Notification!</strong> "+data.message+"\n" +
+                    "                <button type=\"button\" class=\"btn-close\" data-bs-dismiss=\"alert\" aria-label=\"Закрыть\"></button>\n" +
+                    "            </div>");
+            },
+        });
+    });
+
+    $("#pushAction").on('click', function(e) {
+        loadingModal.show();
+        var branch = $(".currentBranchSpan").html();
+        $.ajax({
+            type: "POST",
+            url: "/push",
+            cache: false,
+            dataType: "json",
+            data:{
+                "branch": branch,
+                "_token": $('meta[name="csrf-token"]').attr('content')
+            },
+            beforeSend: function() {
+
+            },
+            success: function(data) {
+                loadingModal.hide();
+                var classColor="success";
+                if(String(data.result) == "ERROR")
+                {
+                    classColor="danger"
+                }
+                $("#notificationContainer").append("<div class=\"alert alert-"+classColor+" alert-dismissible fade show\" role=\"alert\">\n" +
+                    "                <strong>Notification!</strong> "+data.message+"\n" +
+                    "                <button type=\"button\" class=\"btn-close\" data-bs-dismiss=\"alert\" aria-label=\"Закрыть\"></button>\n" +
+                    "            </div>");
+            },
+        });
+    });
+
+    $("#forcePushAction").on('click', function(e) {
+        loadingModal.show();
+        var branch = $(".currentBranchSpan").html();
+        $.ajax({
+            type: "POST",
+            url: "/push",
+            cache: false,
+            dataType: "json",
+            data:{
+                "force": 1,
+                "branch": branch,
+                "_token": $('meta[name="csrf-token"]').attr('content')
+            },
+            beforeSend: function() {
+
+            },
+            success: function(data) {
+                loadingModal.hide();
+                var classColor="success";
+                if(String(data.result) == "ERROR")
+                {
+                    classColor="danger"
+                }
+                $("#notificationContainer").append("<div class=\"alert alert-"+classColor+" alert-dismissible fade show\" role=\"alert\">\n" +
+                    "                <strong>Notification!</strong> "+data.message+"\n" +
+                    "                <button type=\"button\" class=\"btn-close\" data-bs-dismiss=\"alert\" aria-label=\"Закрыть\"></button>\n" +
+                    "            </div>");
+
+            },
+        });
+    });
+
     $("#commitForm").submit(function(e) {
+        loadingModal.show();
         e.preventDefault();
         var data={};
         $("#commitForm").find("input, textarea").each(function() {
@@ -119,21 +243,59 @@ $(document).ready(function() {
 
             },
             success: function(data) {
+                loadingModal.hide();
                 location.reload();
             },
             error: function() {
+                loadingModal.hide();
                 console.log("error");
             }
         });
     });
 
-    $(".btn-connect").on('mousedown', function(e) {
-        $("#loginInputIP").val($(this).attr("data-connect-ip"))
-        $("#loginInputIPIdConnect").val($(this).attr("data-connect-id"))
-        $("#loginInputPort").val($(this).attr("data-connect-port"))
-        $("#loginInputLogin").val($(this).attr("data-connect-login"))
-        $("#loginInputPath").val($(this).attr("data-connect-pathToSite"))
+    $("#deleteForm").submit(function(e) {
+        loadingModal.show();
+        e.preventDefault();
+        var data={};
+        $("#deleteForm").find("input").each(function() {
+            data[this.name]=this.value;
+        });
+        $.ajax({
+            type: "POST",
+            url: "/deleteConnect",
+            cache: false,
+            dataType: "json",
+            data: data,
+            beforeSend: function() {
+
+            },
+            success: function(data) {
+                console.log("data");
+                setTimeout(function(){
+                    loadingModal.hide();
+                    location.reload();
+                },1000)
+                loadingModal.hide();
+            },
+            error: function() {
+                loadingModal.hide();
+            }
+        });
     });
+
+    $(".btn-connect").on('mousedown', function(e) {
+        $("#nameConnect").val($(this).attr("data-connect-name"));
+        $("#loginInputIP").val($(this).attr("data-connect-ip"));
+        $("#loginInputIPIdConnect").val($(this).attr("data-connect-id"));
+        $("#loginInputPort").val($(this).attr("data-connect-port"));
+        $("#loginInputLogin").val($(this).attr("data-connect-login"));
+        $("#loginInputPath").val($(this).attr("data-connect-pathToSite"));
+    });
+
+    $("#toggleDeleteModal").on('mousedown', function(e) {
+        $("#idDeleteConnect").val($(this).attr("data-delete-connect-id"));
+    });
+
     $(".fileRow").on('mousedown', function(e) {
         getDiffFromFile($(this).attr('data-filename'));
     });

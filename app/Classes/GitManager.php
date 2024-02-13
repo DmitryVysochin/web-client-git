@@ -10,11 +10,11 @@ class GitManager
 {
     public GitConnect $connect;
 
-    public function __construct($ip, $login = "root", $port = 22, $pathToSite = "/")
+    public function __construct($loginGit,$passwordGit,$ip, $login = "root", $port = 22, $pathToSite = "/")
     {
-        $this->connect = new GitConnect($ip, $login, $port, $pathToSite);
+        $this->connect = new GitConnect($loginGit,$passwordGit,$ip, $login, $port, $pathToSite);
     }
-
+    //Долго работает из-за подключения к серверу
     public function getFilesFromStatus()
     {
         $status = $this->connect->gitStatus();
@@ -38,6 +38,7 @@ class GitManager
         return $this->connect->gitDiffFromFile($fileName);
     }
 
+    //Долго работает из-за подключения к серверу
     public function getAllBranches()
     {
         $branchOutput = $this->connect->gitBranch();
@@ -85,8 +86,34 @@ class GitManager
         }
     }
 
+    public function getRepositories()
+    {
+        $remoteOutput=$this->connect->gitRemote();
+        $repositories=GitParser::parseRepositories($remoteOutput);
+        $prepareRepositories=[];
+        foreach ($repositories as $repositoryStr){
+            $prepareRepositories[$repositoryStr]=1;
+        }
+        return $prepareRepositories;
+    }
+
     public function commit($message)
     {
         $this->connect->gitCommit($message);
+    }
+
+    public function forcePush($branch)
+    {
+        return $this->connect->gitPush($branch,true);
+    }
+
+    public function push($branch)
+    {
+        return $this->connect->gitPush($branch);
+    }
+
+    public function pull($branch)
+    {
+        return $this->connect->gitPull($branch);
     }
 }

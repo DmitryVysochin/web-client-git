@@ -6,9 +6,13 @@ use Mockery\Exception;
 
 class GitConnect extends SshConnect
 {
-    public function __construct($ip, $login = "root", $port = 22, $pathToSite = "/")
+    public string $loginGit;
+    public string $passwordGit;
+    public function __construct($loginGit,$passwordGit,$ip, $login = "root", $port = 22, $pathToSite = "/")
     {
         parent::__construct($ip, $login, $port, $pathToSite);
+        $this->loginGit=$loginGit;
+        $this->passwordGit=$passwordGit;
     }
 
     public function gitStatus()
@@ -16,19 +20,9 @@ class GitConnect extends SshConnect
         return $this->gitCommand("git status -s");
     }
 
-    public function gitDiffUnstage()
-    {
-        return $this->gitCommand("git diff");
-    }
-
     public function gitDiffFromFile($filename)
     {
         return $this->gitCommand("git diff ".$filename);
-    }
-
-    public function gitDiffStage()
-    {
-        return $this->gitCommand("git diff --stage");
     }
 
     public function gitLog()
@@ -51,20 +45,86 @@ class GitConnect extends SshConnect
         return $this->gitCommand("git commit -m  '".$message."'");
     }
 
+    public function gitRemote()
+    {
+        return $this->gitCommand("git remote");
+    }
+
+    public function gitPull($branch)
+    {
+        $result=[];
+        if($this->ssh->isConnected()) {
+            $this->ssh->write("cd " . $this->pathToSite . PHP_EOL);
+            $this->ssh->read($this->login . "@");
+            $this->ssh->write("git pull origin " . $branch . " -q" . PHP_EOL);
+            $this->logInGit();
+            $resultMessage=$this->ssh->read();
+            $result=$this->prepareResult($resultMessage);
+        }else{
+            $resultMessage="Отсутствует коннект";
+            $result["result"]="ERROR";
+            $result["message"]=$resultMessage;
+        }
+
+        return $result;
+    }
+
+    public function gitPush($branch,$isForce=false)
+    {
+        $result=[];
+        $force=$isForce ? "--force " : "";
+        if($this->ssh->isConnected()) {
+            $this->ssh->write("cd " . $this->pathToSite . PHP_EOL);
+            $this->ssh->read($this->login . "@");
+            $this->ssh->write("git push origin " . $branch . " -q " . $force . PHP_EOL);
+            $this->logInGit();
+            $resultMessage=$this->ssh->read();
+            $result=$this->prepareResult($resultMessage);
+        }else{
+            $resultMessage="Отсутствует коннект";
+            $result["result"]="ERROR";
+            $result["message"]=$resultMessage;
+        }
+
+        return $result;
+    }
+
     public function gitCheckout($data)
     {
         return $this->gitCommand("git checkout ".$data);
     }
 
+    private function logInGit()
+    {
+        $this->ssh->read("Username for");
+        $this->ssh->write($this->loginGit . PHP_EOL);
+        $this->ssh->read("Password for");
+        $this->ssh->write($this->passwordGit . PHP_EOL);
+    }
+
+    private function prepareResult($resultMessage)
+    {
+        if(stripos($resultMessage,"fatal")!==false || stripos($resultMessage,"error")!==false || stripos($resultMessage,"denied")!==false) {
+            $result["result"]="ERROR";
+            $result["message"]=$resultMessage;
+        }else{
+            $result["result"]="SUCCESS";
+            $result["message"]=$resultMessage;
+        }
+
+        return $result;
+    }
+
+    public static function isGitInstance()
+    {
+
+    }
+
+    //TODO сделать нормальный разбор ошибок
     private function gitCommand($command)
     {
-        $result=$this->execInPathToSite($command);
-        if(empty($result["ERROR"])){
-            return $result["RESULT"];
-        }
-        else{
-            throw new \Exception($result["ERROR"]);
-        }
+        $result = $this->execInPathToSite($command);
+        return $result;
     }
 
 }

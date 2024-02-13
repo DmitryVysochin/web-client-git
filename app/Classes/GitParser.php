@@ -17,4 +17,11 @@ class GitParser
         preg_match_all("/[^\n]+(?=\n)/",$logOutput,$commits);
         return $commits[0];
     }
+
+    public static function parseRepositories($remoteOutput)
+    {
+        $repositories=[];
+        preg_match_all("/[^\n]+(?=\n)/",$remoteOutput,$repositories);
+        return $repositories[0];
+    }
 }

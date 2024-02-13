@@ -19,6 +19,9 @@ class ConnectSSHModel extends  Model
         'ip',
         'port',
         'login',
+        'loginGit',
+        'passwordGit',
+        'nameConnect',
         'pathToSite',
     ];
 
