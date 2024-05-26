@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Classes;
 
 use phpseclib3\Net\SSH2;
@@ -27,7 +28,7 @@ class SshConnect
 
     }
 
-    public static function isConnect($ip, $port,$login,$password): bool
+    public static function isConnect($ip, $port, $login, $password): bool
     {
         $ssh = new SSH2($ip . ":" . $port);
         return $ssh->login($login, $password);
@@ -35,6 +36,6 @@ class SshConnect
 
     protected function execInPathToSite($command)
     {
-        return $this->ssh->exec("cd " . $this->pathToSite . "; ".$command);
+        return $this->ssh->exec("cd " . $this->pathToSite . "; " . $command);
     }
 }

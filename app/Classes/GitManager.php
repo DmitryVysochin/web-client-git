@@ -10,10 +10,11 @@ class GitManager
 {
     public GitConnect $connect;
 
-    public function __construct($loginGit,$passwordGit,$ip, $login = "root", $port = 22, $pathToSite = "/")
+    public function __construct($loginGit, $passwordGit, $ip, $login = "root", $port = 22, $pathToSite = "/")
     {
-        $this->connect = new GitConnect($loginGit,$passwordGit,$ip, $login, $port, $pathToSite);
+        $this->connect = new GitConnect($loginGit, $passwordGit, $ip, $login, $port, $pathToSite);
     }
+
     //Долго работает из-за подключения к серверу
     public function getFilesFromStatus()
     {
@@ -88,11 +89,11 @@ class GitManager
 
     public function getRepositories()
     {
-        $remoteOutput=$this->connect->gitRemote();
-        $repositories=GitParser::parseRepositories($remoteOutput);
-        $prepareRepositories=[];
-        foreach ($repositories as $repositoryStr){
-            $prepareRepositories[$repositoryStr]=1;
+        $remoteOutput = $this->connect->gitRemote();
+        $repositories = GitParser::parseRepositories($remoteOutput);
+        $prepareRepositories = [];
+        foreach ($repositories as $repositoryStr) {
+            $prepareRepositories[$repositoryStr] = 1;
         }
         return $prepareRepositories;
     }
@@ -104,7 +105,7 @@ class GitManager
 
     public function forcePush($branch)
     {
-        return $this->connect->gitPush($branch,true);
+        return $this->connect->gitPush($branch, true);
     }
 
     public function push($branch)

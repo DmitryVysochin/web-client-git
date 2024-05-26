@@ -1,11 +1,13 @@
 $(document).ready(function() {
     var isOpenSelectConnect=false;
-    var loadingModal= new bootstrap.Modal(document.getElementById('loadingOperation'), {
+    var isOpenSelectBranch=false;
+    var loadingModal=new bootstrap.Modal(document.getElementById('loadingOperation'), {
         backdrop: 'static',
         keyboard: false
     });
 
     function openSelectConnect() {
+        console.log("open select");
         var element=$("#select-connect");
         element.css('background-color', 'white');
         $('.current-connect-b').addClass('d-none');
@@ -15,6 +17,7 @@ $(document).ready(function() {
     }
 
     function openSelectBranch() {
+        console.log("open branch");
         var element=$("#select-branch");
         element.css('background-color', 'white');
         $('.current-branch-w').addClass('d-none');
@@ -25,16 +28,19 @@ $(document).ready(function() {
     }
 
     function closeSelectConnect() {
-        var element=$("#select-connect");
-        element.css('background-color', 'black');
-        $('.current-connect-w').addClass('d-none');
-        $('.current-connect-b').removeClass('d-none');
-        $('.connect-editor').addClass('d-none');
-        $('.git-editor').removeClass('d-none');
+        if (isOpenSelectConnect) {
+            var element=$("#select-connect");
+            element.css('background-color', 'black');
+            $('.current-connect-w').addClass('d-none');
+            $('.current-connect-b').removeClass('d-none');
+            $('.connect-editor').addClass('d-none');
+            $('.git-editor').removeClass('d-none');
+            isOpenSelectConnect=false;
+        }
     }
 
     function checkoutBranch(branch) {
-        var loadingModal = new bootstrap.Modal(document.getElementById('loadingOperation'), {
+        var loadingModal=new bootstrap.Modal(document.getElementById('loadingOperation'), {
             backdrop: 'static',
             keyboard: false
         });
@@ -54,15 +60,13 @@ $(document).ready(function() {
             success: function(data) {
                 loadingModal.hide();
                 var classColor="success";
-                if(String(data.result) == "ERROR")
-                {
+                if (String(data.result) == "ERROR") {
                     classColor="danger"
-                }
-                else {
+                } else {
                     location.reload();
                 }
-                $("#notificationContainer").append("<div class=\"alert alert-"+classColor+" alert-dismissible fade show\" role=\"alert\">\n" +
-                    "                <strong>Notification!</strong> "+data.message+"\n" +
+                $("#notificationContainer").append("<div class=\"alert alert-" + classColor + " alert-dismissible fade show\" role=\"alert\">\n" +
+                    "                <strong>Notification!</strong> " + data.message + "\n" +
                     "                <button type=\"button\" class=\"btn-close\" data-bs-dismiss=\"alert\" aria-label=\"Закрыть\"></button>\n" +
                     "            </div>");
             }
@@ -70,7 +74,7 @@ $(document).ready(function() {
     }
 
     function getDiffFromFile(fileName) {
-        var loadingModal = new bootstrap.Modal(document.getElementById('loadingOperation'), {
+        var loadingModal=new bootstrap.Modal(document.getElementById('loadingOperation'), {
             backdrop: 'static',
             keyboard: false
         });
@@ -104,7 +108,7 @@ $(document).ready(function() {
             },
             error: function() {
                 var classColor="danger";
-                $("#notificationContainer").append("<div class=\"alert alert-"+classColor+" alert-dismissible fade show\" role=\"alert\">\n" +
+                $("#notificationContainer").append("<div class=\"alert alert-" + classColor + " alert-dismissible fade show\" role=\"alert\">\n" +
                     "                <strong>Notification!</strong> Ошибка загрузки файла \n" +
                     "                <button type=\"button\" class=\"btn-close\" data-bs-dismiss=\"alert\" aria-label=\"Закрыть\"></button>\n" +
                     "            </div>");
@@ -130,13 +134,13 @@ $(document).ready(function() {
 
     $("#pullAction").on('click', function(e) {
         loadingModal.show();
-        var branch = $(".currentBranchSpan").html();
+        var branch=$(".currentBranchSpan").html();
         $.ajax({
             type: "POST",
             url: "/pull",
             cache: false,
             dataType: "json",
-            data:{
+            data: {
                 "branch": branch,
                 "_token": $('meta[name="csrf-token"]').attr('content')
             },
@@ -146,12 +150,11 @@ $(document).ready(function() {
             success: function(data) {
                 loadingModal.hide();
                 var classColor="success";
-                if(String(data.result) == "ERROR")
-                {
+                if (String(data.result) == "ERROR") {
                     classColor="danger"
                 }
-                $("#notificationContainer").append("<div class=\"alert alert-"+classColor+" alert-dismissible fade show\" role=\"alert\">\n" +
-                    "                <strong>Notification!</strong> "+data.message+"\n" +
+                $("#notificationContainer").append("<div class=\"alert alert-" + classColor + " alert-dismissible fade show\" role=\"alert\">\n" +
+                    "                <strong>Notification!</strong> " + data.message + "\n" +
                     "                <button type=\"button\" class=\"btn-close\" data-bs-dismiss=\"alert\" aria-label=\"Закрыть\"></button>\n" +
                     "            </div>");
             },
@@ -160,13 +163,13 @@ $(document).ready(function() {
 
     $("#pushAction").on('click', function(e) {
         loadingModal.show();
-        var branch = $(".currentBranchSpan").html();
+        var branch=$(".currentBranchSpan").html();
         $.ajax({
             type: "POST",
             url: "/push",
             cache: false,
             dataType: "json",
-            data:{
+            data: {
                 "branch": branch,
                 "_token": $('meta[name="csrf-token"]').attr('content')
             },
@@ -176,12 +179,11 @@ $(document).ready(function() {
             success: function(data) {
                 loadingModal.hide();
                 var classColor="success";
-                if(String(data.result) == "ERROR")
-                {
+                if (String(data.result) == "ERROR") {
                     classColor="danger"
                 }
-                $("#notificationContainer").append("<div class=\"alert alert-"+classColor+" alert-dismissible fade show\" role=\"alert\">\n" +
-                    "                <strong>Notification!</strong> "+data.message+"\n" +
+                $("#notificationContainer").append("<div class=\"alert alert-" + classColor + " alert-dismissible fade show\" role=\"alert\">\n" +
+                    "                <strong>Notification!</strong> " + data.message + "\n" +
                     "                <button type=\"button\" class=\"btn-close\" data-bs-dismiss=\"alert\" aria-label=\"Закрыть\"></button>\n" +
                     "            </div>");
             },
@@ -190,13 +192,13 @@ $(document).ready(function() {
 
     $("#forcePushAction").on('click', function(e) {
         loadingModal.show();
-        var branch = $(".currentBranchSpan").html();
+        var branch=$(".currentBranchSpan").html();
         $.ajax({
             type: "POST",
             url: "/push",
             cache: false,
             dataType: "json",
-            data:{
+            data: {
                 "force": 1,
                 "branch": branch,
                 "_token": $('meta[name="csrf-token"]').attr('content')
@@ -207,12 +209,11 @@ $(document).ready(function() {
             success: function(data) {
                 loadingModal.hide();
                 var classColor="success";
-                if(String(data.result) == "ERROR")
-                {
+                if (String(data.result) == "ERROR") {
                     classColor="danger"
                 }
-                $("#notificationContainer").append("<div class=\"alert alert-"+classColor+" alert-dismissible fade show\" role=\"alert\">\n" +
-                    "                <strong>Notification!</strong> "+data.message+"\n" +
+                $("#notificationContainer").append("<div class=\"alert alert-" + classColor + " alert-dismissible fade show\" role=\"alert\">\n" +
+                    "                <strong>Notification!</strong> " + data.message + "\n" +
                     "                <button type=\"button\" class=\"btn-close\" data-bs-dismiss=\"alert\" aria-label=\"Закрыть\"></button>\n" +
                     "            </div>");
 
@@ -226,10 +227,10 @@ $(document).ready(function() {
         var data={};
         $("#commitForm").find("input, textarea").each(function() {
             if (this.type === "checkbox") {
-                if(this.checked) {
+                if (this.checked) {
                     data[this.name]=String(this.dataset.filenameCheckbox);
                 }
-            }else {
+            } else {
                 data[this.name]=this.value;
             }
         });
@@ -271,10 +272,10 @@ $(document).ready(function() {
             },
             success: function(data) {
                 console.log("data");
-                setTimeout(function(){
+                setTimeout(function() {
                     loadingModal.hide();
                     location.reload();
-                },1000)
+                }, 1000)
                 loadingModal.hide();
             },
             error: function() {

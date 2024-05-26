@@ -8,11 +8,12 @@ class GitConnect extends SshConnect
 {
     public string $loginGit;
     public string $passwordGit;
-    public function __construct($loginGit,$passwordGit,$ip, $login = "root", $port = 22, $pathToSite = "/")
+
+    public function __construct($loginGit, $passwordGit, $ip, $login = "root", $port = 22, $pathToSite = "/")
     {
         parent::__construct($ip, $login, $port, $pathToSite);
-        $this->loginGit=$loginGit;
-        $this->passwordGit=$passwordGit;
+        $this->loginGit = $loginGit;
+        $this->passwordGit = $passwordGit;
     }
 
     public function gitStatus()
@@ -22,7 +23,7 @@ class GitConnect extends SshConnect
 
     public function gitDiffFromFile($filename)
     {
-        return $this->gitCommand("git diff ".$filename);
+        return $this->gitCommand("git diff " . $filename);
     }
 
     public function gitLog()
@@ -37,12 +38,12 @@ class GitConnect extends SshConnect
 
     public function gitAdd($file)
     {
-        return $this->gitCommand("git add ".$file);
+        return $this->gitCommand("git add " . $file);
     }
 
     public function gitCommit($message)
     {
-        return $this->gitCommand("git commit -m  '".$message."'");
+        return $this->gitCommand("git commit -m  '" . $message . "'");
     }
 
     public function gitRemote()
@@ -52,38 +53,38 @@ class GitConnect extends SshConnect
 
     public function gitPull($branch)
     {
-        $result=[];
-        if($this->ssh->isConnected()) {
+        $result = [];
+        if ($this->ssh->isConnected()) {
             $this->ssh->write("cd " . $this->pathToSite . PHP_EOL);
             $this->ssh->read($this->login . "@");
             $this->ssh->write("git pull origin " . $branch . " -q" . PHP_EOL);
             $this->logInGit();
-            $resultMessage=$this->ssh->read();
-            $result=$this->prepareResult($resultMessage);
-        }else{
-            $resultMessage="Отсутствует коннект";
-            $result["result"]="ERROR";
-            $result["message"]=$resultMessage;
+            $resultMessage = $this->ssh->read();
+            $result = $this->prepareResult($resultMessage);
+        } else {
+            $resultMessage = "Отсутствует коннект";
+            $result["result"] = "ERROR";
+            $result["message"] = $resultMessage;
         }
 
         return $result;
     }
 
-    public function gitPush($branch,$isForce=false)
+    public function gitPush($branch, $isForce = false)
     {
-        $result=[];
-        $force=$isForce ? "--force " : "";
-        if($this->ssh->isConnected()) {
+        $result = [];
+        $force = $isForce ? "--force " : "";
+        if ($this->ssh->isConnected()) {
             $this->ssh->write("cd " . $this->pathToSite . PHP_EOL);
             $this->ssh->read($this->login . "@");
             $this->ssh->write("git push origin " . $branch . " -q " . $force . PHP_EOL);
             $this->logInGit();
-            $resultMessage=$this->ssh->read();
-            $result=$this->prepareResult($resultMessage);
-        }else{
-            $resultMessage="Отсутствует коннект";
-            $result["result"]="ERROR";
-            $result["message"]=$resultMessage;
+            $resultMessage = $this->ssh->read();
+            $result = $this->prepareResult($resultMessage);
+        } else {
+            $resultMessage = "Отсутствует коннект";
+            $result["result"] = "ERROR";
+            $result["message"] = $resultMessage;
         }
 
         return $result;
@@ -91,7 +92,7 @@ class GitConnect extends SshConnect
 
     public function gitCheckout($data)
     {
-        return $this->gitCommand("git checkout ".$data);
+        return $this->gitCommand("git checkout " . $data);
     }
 
     private function logInGit()
@@ -104,12 +105,12 @@ class GitConnect extends SshConnect
 
     private function prepareResult($resultMessage)
     {
-        if(stripos($resultMessage,"fatal")!==false || stripos($resultMessage,"error")!==false || stripos($resultMessage,"denied")!==false) {
-            $result["result"]="ERROR";
-            $result["message"]=$resultMessage;
-        }else{
-            $result["result"]="SUCCESS";
-            $result["message"]=$resultMessage;
+        if (stripos($resultMessage, "fatal") !== false || stripos($resultMessage, "error") !== false || stripos($resultMessage, "denied") !== false) {
+            $result["result"] = "ERROR";
+            $result["message"] = $resultMessage;
+        } else {
+            $result["result"] = "SUCCESS";
+            $result["message"] = $resultMessage;
         }
 
         return $result;
