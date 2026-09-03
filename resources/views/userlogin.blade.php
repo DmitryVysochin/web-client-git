@@ -49,15 +49,14 @@
                 <div id="emailHelp" class="text-danger">{{$message}}</div>
                 @enderror
                 <div class="mb-3">
-                    <label for="exampleInputEmail" class="form-label">Email address</label>
+                    <label for="exampleInputEmail" class="form-label">Email адрес</label>
                     <input name="email" type="email" class="form-control" id="exampleInputEmail" aria-describedby="emailHelp">
-                    <div id="emailHelp" class="form-text">We'll never share your email with anyone else.</div>
                 </div>
                 <div class="mb-3">
-                    <label for="exampleInputPassword" class="form-label">Password</label>
+                    <label for="exampleInputPassword" class="form-label">Пароль</label>
                     <input name="password" type="password" class="form-control" id="exampleInputPassword">
                 </div>
-                <button type="submit" class="btn btn-primary">Submit</button>
+                <button type="submit" class="btn btn-primary">Войти</button>
             </form>
             <a href="{{route("user.registration")}}" >Зарегистрироваться</a>
         </div>

@@ -268,7 +268,7 @@ use App\Classes\Tools;
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="addConnectModalLabel">Заголовок модального окна</h5>
+                    <h5 class="modal-title" id="addConnectModalLabel">Создание коннекта</h5>
                 </div>
                 <form method="post" action="{{ route("connect.registration") }}">
                     <div class="modal-body">
